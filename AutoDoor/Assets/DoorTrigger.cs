@@ -7,6 +7,7 @@ public class DoorTrigger : MonoBehaviour
     public float doorSpeed = 0.7f;
     public float doorMax = 5.0f;
     public float doorMin = 0.0f;
+    public float startTime;
     public GameObject doorObject;
     public bool active;
     
@@ -19,52 +20,50 @@ public class DoorTrigger : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        moveUp();
+        moveDown();
 
+        if (doorObject.transform.position.y > doorMax)
+        {
+            doorObject.transform.position = new Vector3(0, doorMax, 0);
+        }
+
+        if (doorObject.transform.position.y < doorMin)
+        {
+            doorObject.transform.position = new Vector3(0, doorMin, 0);
+        }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             active = true;
-            moveUp();
         }
     }
 
     private void OnTriggerExit(Collider other)
-    { 
-        if (other.gameObject.CompareTag("Player"))
-        {
-            active = false;
-            moveDown();
-        }
-            
+    {
+        active = false;      
     }
 
     public void moveUp()
     {
-        if(active == true)
+        //doorObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, doorMax, 0), ForceMode.Impulse);
+        //doorObject.transform.Translate(Vector3.Lerp(new Vector3(0, doorMin, 0), new Vector3(0, doorMin, 0), 0));
+        if (active == true)
         {
-            doorObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, doorMax, 0), ForceMode.Force);
-            
-            if (doorObject.transform.position.y > doorMax)
-            {
-                doorObject.transform.position = new Vector3(0, doorMax, 0);
-            }
+            doorObject.transform.Translate(new Vector3(0, doorMax, 0) * Time.deltaTime * doorSpeed);
         }
     }
 
     public void moveDown()
     {
-        if(active == false)
-        { 
-            doorObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, doorMin, 0), ForceMode.Force);
-            
-            if (doorObject.transform.position.y < doorMin)
-            {
-                doorObject.transform.position = new Vector3(0, doorMin, 0);
-            }
+        //doorObject.GetComponent<Rigidbody>().AddForce(new Vector3(0, -doorMax, 0), ForceMode.Impulse);
+        //doorObject.transform.Translate(Vector3.Lerp(new Vector3(0, doorMax, 0), new Vector3(0, doorMin, 0), 0));
+        if (active == false)
+        {
+            doorObject.transform.Translate(new Vector3(0, -doorMax, 0) * Time.deltaTime * doorSpeed);
         }
-       
     }
 }
